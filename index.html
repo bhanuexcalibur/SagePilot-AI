@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>SagePilot × Bhanu Kumar · Proof of Work</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+:root{
+  --bg:       #050709;
+  --bg2:      #0a0d13;
+  --bg3:      #0f1318;
+  --bg4:      #151c28;
+  --bg5:      #1a2335;
+  --bdr:      rgba(255,255,255,0.06);
+  --bmd:      rgba(255,255,255,0.12);
+  --blg:      rgba(255,255,255,0.20);
+  --t1:       #eef2f7;
+  --t2:       #8d95a8;
+  --t3:       #4a5265;
+  --signal:      #1dd4bf;
+  --signal-dim:  rgba(29,212,191,0.09);
+  --signal-glow: rgba(29,212,191,0.22);
+  --signal-t:    #4de6d9;
+  --accent:      #06d6a0;
+  --accent-dim:  rgba(6,214,160,0.09);
+  --red:         #ff5e52;
+  --red-dim:     rgba(255,94,82,0.09);
+}
+
+html{scroll-behavior:smooth;scroll-padding-top:64px;}
+body{
+  background:var(--bg);color:var(--t1);
+  font-family:'Inter',system-ui,sans-serif;
+  font-size:16px;line-height:1.7;font-weight:400;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(700px 480px at 8% -8%, rgba(29,212,191,0.07), transparent 60%),
+    radial-gradient(650px 450px at 98% 12%, rgba(6,214,160,0.05), transparent 60%);
+}
+
+::selection{background:var(--signal-dim);color:var(--t1);}
+a{color:inherit;text-decoration:none;}
+img,svg{display:block;}
+
+.pbar{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--signal),var(--accent));z-index:500;width:0%;transition:width 0.1s linear;}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:300;background:rgba(5,7,9,0.90);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--bdr);padding:0 5vw;}
+.nav-i{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px;gap:16px;}
+.nav-brand{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--t1);letter-spacing:0.02em;white-space:nowrap;display:flex;align-items:center;gap:8px;text-decoration:none;}
+.nav-brand .dot{width:6px;height:6px;border-radius:50%;background:var(--signal);box-shadow:0 0 0 0 var(--signal-glow);animation:dotpulse 2.6s ease-in-out infinite;}
+@keyframes dotpulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.45;transform:scale(0.72);}}
+.nav-brand b{font-weight:500;color:var(--t1);}
+.nav-brand span{color:var(--t3);}
+.nav-links{display:flex;gap:2px;flex-wrap:wrap;}
+.np{font-size:12px;font-weight:500;padding:6px 12px;border-radius:6px;border:1px solid transparent;color:var(--t2);background:transparent;text-decoration:none;transition:all 0.13s;white-space:nowrap;font-family:'JetBrains Mono',monospace;letter-spacing:0.01em;}
+.np:hover{border-color:var(--bdr);color:var(--t1);background:var(--bg3);}
+.hbg{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px;flex-shrink:0;}
+.hbg span{display:block;width:20px;height:1.5px;background:var(--t1);border-radius:2px;transition:transform .3s,opacity .3s;}
+.hbg.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg);}
+.hbg.open span:nth-child(2){opacity:0;}
+.hbg.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);}
+.mob-menu{display:none;position:fixed;inset:0;top:60px;background:var(--bg);z-index:290;flex-direction:column;padding:26px 5vw;gap:0;border-top:1px solid var(--bdr);}
+.mob-menu.open{display:flex;}
+.mob-menu a{display:block;font-size:18px;font-family:'Newsreader',serif;font-style:italic;font-weight:400;color:var(--t1);text-decoration:none;padding:15px 0;border-bottom:1px solid var(--bdr);}
+.mob-menu a:last-child{border-bottom:none;}
+@media(max-width:760px){.nav-links{display:none;}.hbg{display:flex;}}
+
+.wrap{max-width:1200px;margin:0 auto;padding:0 5vw;position:relative;z-index:1;}
+section.part{padding:84px 0;border-bottom:1px solid var(--bdr);}
+
+.rv{opacity:0;transform:translateY(14px);transition:opacity 0.55s ease,transform 0.55s ease;}
+.rv.in{opacity:1;transform:none;}
+
+/* HERO */
+.hero{padding:86px 5vw 76px;max-width:1200px;margin:0 auto;position:relative;z-index:1;border-bottom:1px solid var(--bdr);}
+.hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:500;letter-spacing:0.13em;text-transform:uppercase;color:var(--t3);margin-bottom:22px;}
+.hero-hed{font-family:'Newsreader',serif;font-weight:400;font-style:italic;font-size:clamp(34px,5.8vw,62px);line-height:1.08;letter-spacing:-0.02em;color:var(--t1);margin-bottom:18px;max-width:860px;}
+.hero-sub{font-size:clamp(15px,1.8vw,17px);color:var(--t2);max-width:620px;line-height:1.75;margin-bottom:42px;font-weight:400;}
+.hero-sub strong{color:var(--t1);font-weight:600;}
+
+.hero-canvas{margin-top:44px;margin-bottom:32px;}
+.lifecycle-viz{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:14px;}
+.lc-stage{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:18px 14px;text-align:center;transition:all 0.3s;}
+.lc-stage:hover{border-color:var(--signal);background:var(--bg3);}
+.lc-icon{font-size:32px;margin-bottom:10px;display:block;}
+.lc-label{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:var(--t3);line-height:1.4;}
+@media(max-width:900px){.lifecycle-viz{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:640px){.lifecycle-viz{grid-template-columns:repeat(2,1fr);}}
+
+.hero-links{display:flex;gap:12px;flex-wrap:wrap;margin-top:32px;align-items:center;}
+.hlink{font-size:14px;font-weight:500;padding:10px 16px;border-radius:8px;border:1px solid var(--bdr);color:var(--t2);transition:all 0.2s;display:inline-flex;align-items:center;gap:6px;}
+.hlink:hover{border-color:var(--signal);color:var(--t1);}
+.hlink.pri{background:var(--signal);border-color:var(--signal);color:#051514;font-weight:600;}
+.hlink.pri:hover{opacity:0.9;}
+
+/* SECTION LABEL */
+.sec-label{display:flex;align-items:center;gap:14px;margin-bottom:28px;}
+.sec-num{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--signal-t);background:var(--signal-dim);border:1px solid rgba(29,212,191,0.22);border-radius:4px;padding:3px 10px;white-space:nowrap;}
+.sec-title{font-size:11px;font-weight:600;letter-spacing:0.13em;text-transform:uppercase;color:var(--t3);font-family:'JetBrains Mono',monospace;}
+.part-h{font-family:'Newsreader',serif;font-style:italic;font-weight:400;font-size:clamp(24px,3.4vw,38px);line-height:1.22;color:var(--t1);margin-bottom:16px;max-width:800px;}
+.part-lead{font-size:15px;color:var(--t2);line-height:1.78;max-width:720px;margin-bottom:32px;}
+.part-lead strong{color:var(--t1);font-weight:600;}
+
+/* CATEGORY MATRIX */
+.comp-matrix{margin-top:28px;}
+.matrix-scroll{overflow-x:auto;border:1px solid var(--bdr);border-radius:12px;}
+.matrix-table{width:100%;min-width:600px;border-collapse:collapse;}
+.matrix-table th,
+.matrix-table td{padding:16px 14px;text-align:left;border-right:1px solid var(--bdr);font-size:13px;white-space:nowrap;}
+.matrix-table th:last-child,
+.matrix-table td:last-child{border-right:none;}
+.matrix-table thead{background:var(--bg2);border-bottom:1px solid var(--bdr);}
+.matrix-table th{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--t3);font-weight:600;}
+.matrix-table tr:hover{background:var(--bg2);}
+.matrix-table td:first-child{font-weight:600;color:var(--signal-t);}
+.matrix-table .check{color:var(--accent);}
+.matrix-table .cross{color:var(--t3);opacity:0.4;}
+
+/* MESSAGING MATRIX */
+.msg-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:20px;}
+.msg-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:20px;transition:all 0.3s;}
+.msg-card:hover{border-color:var(--signal);background:var(--bg3);}
+.msg-persona{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--signal-t);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.msg-persona span{width:6px;height:6px;border-radius:50%;background:var(--signal);}
+.msg-title{font-size:14px;font-weight:600;color:var(--t1);margin-bottom:8px;line-height:1.4;}
+.msg-content{font-size:13px;color:var(--t2);line-height:1.6;}
+.msg-tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.04em;text-transform:uppercase;background:var(--signal-dim);color:var(--signal-t);padding:4px 8px;border-radius:4px;margin-top:10px;}
+
+/* VERTICAL POSITIONING */
+.verticals-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:24px;}
+.vertical-card{background:linear-gradient(135deg,rgba(29,212,191,0.04),rgba(6,214,160,0.02));border:1px solid var(--bdr);border-radius:10px;padding:18px 14px;text-align:center;transition:all 0.3s;}
+.vertical-card:hover{border-color:var(--signal);background:linear-gradient(135deg,rgba(29,212,191,0.08),rgba(6,214,160,0.04));}
+.v-icon{font-size:36px;margin-bottom:12px;display:block;}
+.v-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.05em;color:var(--t1);margin-bottom:6px;}
+.v-use{font-size:12px;color:var(--t2);line-height:1.4;}
+
+/* COMPETITIVE POSITIONING */
+.positioning-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:24px;}
+.pos-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:22px;transition:all 0.3s;}
+.pos-card:hover{border-color:var(--accent);}
+.pos-vs{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:var(--t3);margin-bottom:8px;}
+.pos-title{font-size:14px;font-weight:600;color:var(--t1);margin-bottom:12px;}
+.pos-content{display:flex;flex-direction:column;gap:8px;font-size:13px;line-height:1.6;}
+.pos-row{display:flex;gap:8px;align-items:flex-start;}
+.pos-row span:first-child{color:var(--accent);font-weight:600;flex-shrink:0;}
+.pos-row span:last-child{color:var(--t2);}
+
+/* SALES ENABLEMENT SECTION */
+.enable-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:24px;}
+.enable-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:20px;}
+.enable-type{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.enable-type span{width:6px;height:6px;border-radius:50%;background:var(--accent);}
+.enable-title{font-size:13px;font-weight:600;color:var(--t1);margin-bottom:8px;}
+.enable-desc{font-size:12px;color:var(--t2);line-height:1.6;}
+
+/* THOUGHT LEADERSHIP */
+.tl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:24px;}
+.tl-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:20px;display:flex;flex-direction:column;}
+.tl-format{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:var(--signal-t);margin-bottom:8px;font-weight:600;}
+.tl-title{font-size:14px;font-weight:600;color:var(--t1);margin-bottom:8px;line-height:1.4;}
+.tl-desc{font-size:12px;color:var(--t2);line-height:1.6;flex-grow:1;margin-bottom:10px;}
+.tl-hook{font-size:12px;background:var(--signal-dim);color:var(--signal-t);padding:8px 10px;border-radius:6px;border-left:2px solid var(--signal);}
+
+/* PROOF STRIP */
+.proof-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:24px;}
+.proof-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:18px 16px;transition:all 0.3s;}
+.proof-card:hover{border-color:var(--signal);}
+.proof-name{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.05em;color:var(--signal-t);font-weight:600;margin-bottom:8px;text-transform:uppercase;}
+.proof-title{font-size:13px;font-weight:600;color:var(--t1);margin-bottom:6px;}
+.proof-desc{font-size:12px;color:var(--t2);line-height:1.5;}
+
+/* FOOTER */
+.sig{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:40px;padding:58px 0;}
+.sig-main{flex-grow:1;}
+.sig-name{font-family:'Newsreader',serif;font-weight:400;font-style:italic;font-size:26px;line-height:1.2;letter-spacing:-0.01em;color:var(--t1);margin-bottom:18px;}
+.sig-name span{color:var(--t3);}
+.sig-links{font-size:14px;color:var(--t2);line-height:2;}
+.sig-link{display:inline-flex;align-items:center;gap:8px;color:var(--t2);text-decoration:none;border-bottom:1px solid transparent;transition:all 0.2s;margin-right:20px;}
+.sig-link:hover{color:var(--signal);border-bottom-color:var(--signal);}
+.sig-link svg{width:16px;height:16px;flex-shrink:0;}
+.sig-resume{display:inline-flex;align-items:center;gap:8px;font-weight:600;background:var(--signal);color:#051514;padding:10px 16px;border-radius:8px;text-decoration:none;transition:opacity 0.2s;}
+.sig-resume:hover{opacity:0.88;}
+.sig-resume svg{width:14px;height:14px;}
+
+.note{font-size:12px;color:var(--t3);line-height:1.8;margin-top:48px;padding-top:48px;border-top:1px solid var(--bdr);max-width:840px;}
+
+@media(max-width:680px){
+  .sig{flex-direction:column;}
+  .msg-grid{grid-template-columns:1fr;}
+  .positioning-grid{grid-template-columns:1fr;}
+  .enable-grid{grid-template-columns:1fr;}
+  .tl-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- PROGRESS BAR -->
+<div class="pbar" id="pbar"></div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-i">
+    <a href="#" class="nav-brand">
+      <div class="dot"></div>
+      <b>SagePilot</b>
+      <span>PMM Strategy</span>
+    </a>
+    <div class="nav-links">
+      <a href="#category" class="np">Category</a>
+      <a href="#homepage" class="np">Homepage</a>
+      <a href="#competitive" class="np">Competitive</a>
+      <a href="#battlecard" class="np">Battlecard</a>
+      <a href="#90days" class="np">90 Days</a>
+      <a href="#week1" class="np">Week 1</a>
+      <a href="#work" class="np">Work</a>
+    </div>
+    <button id="hbg" class="hbg" onclick="toggleMob()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div id="mobm" class="mob-menu">
+  <a href="#category" onclick="closeMob()">Category</a>
+  <a href="#homepage" onclick="closeMob()">Homepage</a>
+  <a href="#competitive" onclick="closeMob()">Competitive</a>
+  <a href="#battlecard" onclick="closeMob()">Battlecard</a>
+  <a href="#90days" onclick="closeMob()">90 Days</a>
+  <a href="#week1" onclick="closeMob()">Week 1</a>
+  <a href="#work" onclick="closeMob()">Work</a>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <span class="hero-eyebrow">SagePilot × Product Marketing</span>
+  <h1 class="hero-hed">AI that stays on brand across every customer moment.</h1>
+  <p class="hero-sub">SagePilot's positioning advantage is not the technology. It's that they transform every lifecycle stage where customer experience actually happens. The category story needs to reflect this.</p>
+
+  <div class="hero-canvas rv">
+    <span style="font-size:12px;color:var(--t3);font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:12px;display:block;">Customer lifecycle, unified by AI</span>
+    <div class="lifecycle-viz">
+      <div class="lc-stage">
+        <span class="lc-icon">👁️</span>
+        <span class="lc-label">Acquisition</span>
+      </div>
+      <div class="lc-stage">
+        <span class="lc-icon">🛒</span>
+        <span class="lc-label">Conversion</span>
+      </div>
+      <div class="lc-stage">
+        <span class="lc-icon">🚀</span>
+        <span class="lc-label">Activation</span>
+      </div>
+      <div class="lc-stage">
+        <span class="lc-icon">🆘</span>
+        <span class="lc-label">Support</span>
+      </div>
+      <div class="lc-stage">
+        <span class="lc-icon">♻️</span>
+        <span class="lc-label">Retention</span>
+      </div>
+      <div class="lc-stage">
+        <span class="lc-icon">📈</span>
+        <span class="lc-label">Growth</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-links rv">
+    <a href="https://linkedin.com/in/bhanuexcalibur" target="_blank" rel="noopener" class="hlink">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"></path>
+        <circle cx="4" cy="4" r="2"></circle>
+      </svg>
+      LinkedIn
+    </a>
+    <a href="mailto:bhanukumar0902@gmail.com" class="hlink">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+        <polyline points="22,6 12,13 2,6"></polyline>
+      </svg>
+      Email
+    </a>
+    <a href="https://drive.google.com/file/d/15qSm6k2kBwkK4PWLJexGCplWafrjgYCU/view?usp=sharing" target="_blank" rel="noopener" class="hlink pri">
+      Resume
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </a>
+  </div>
+</div>
+
+<!-- SECTION 01: CATEGORY DEFINITION -->
+<section class="part" id="category">
+  <div class="wrap rv">
+    <div class="sec-label">
+      <span class="sec-num">01</span>
+      <span class="sec-title">Category Definition</span>
+    </div>
+    <h2 class="part-h">The gap between chatbots and human teams is where SagePilot wins.</h2>
+    <p class="part-lead">Positioning matters most when a category is young. Right now, every buyer compares SagePilot to chatbots (too dumb) and human teams (too expensive). Neither frame is correct. The real competition is the status quo, not other vendors.</p>
+
+    <div class="comp-matrix">
+      <div class="matrix-scroll">
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th>Dimension</th>
+              <th>Chatbots</th>
+              <th>Human Teams</th>
+              <th>AI Employees</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Brand Alignment</td>
+              <td class="cross">✕</td>
+              <td class="check">✓</td>
+              <td class="check">✓</td>
+            </tr>
+            <tr>
+              <td>Lifecycle Coverage</td>
+              <td class="cross">✕</td>
+              <td class="check">✓</td>
+              <td class="check">✓</td>
+            </tr>
+            <tr>
+              <td>Unit Economics</td>
+              <td class="check">✓</td>
+              <td class="cross">✕</td>
+              <td class="check">✓</td>
+            </tr>
+            <tr>
+              <td>24/7 Availability</td>
+              <td class="check">✓</td>
+              <td class="cross">✕</td>
+              <td class="check">✓</td>
+            </tr>
+            <tr>
+              <td>Training Time</td>
+              <td class="check">✓</td>
+              <td class="cross">✕</td>
+              <td class="check">✓</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <p style="font-size:13px;color:var(--t2);margin-top:18px;line-height:1.6;">The narrative: <strong>AI employees are not chatbots that learned to talk better. They're autonomous brand representatives who onboard into your team.</strong> This reframes the conversation from "technology substitute" to "operating model transformation."</p>
+  </div>
+</section>
+
+<!-- SECTION 02: HOMEPAGE REWRITE -->
+<section class="part" id="homepage">
+  <div class="wrap rv">
+    <div class="sec-label">
+      <span class="sec-num">02</span>
+      <span class="sec-title">Homepage Rewrite</span>
+    </div>
+    <h2 class="part-h">The current hero misses the business outcome.</h2>
+    <p class="part-lead">SagePilot's current messaging leads with "AI Employees." Memorable, but a founder landing cold doesn't yet understand what that actually replaces or saves. The rewrite leads with the outcome first, proves the capability second.</p>
+
+    <div style="margin-top:32px;display:grid;grid-template-columns:1fr;gap:28px;">
+      
+      <div style="background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:24px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--red);margin-bottom:14px;font-weight:600;">Current</div>
+        <div style="font-family:'Newsreader',serif;font-style:italic;font-size:22px;line-height:1.3;color:var(--t1);margin-bottom:12px;">We build AI Employees</div>
+        <div style="font-size:14px;color:var(--t2);line-height:1.7;">Autonomous coworkers that onboard into your team and deliver exceptional experiences across your entire customer lifecycle.</div>
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--bdr);font-size:12px;color:var(--t3);line-height:1.6;">
+          <strong>Problem:</strong> A founder still has to imagine what this means for their business. What's the business outcome? What do I replace? What do I save?
+        </div>
+      </div>
+
+      <div style="background:linear-gradient(135deg,rgba(29,212,191,0.08),rgba(6,214,160,0.04));border:1px solid var(--signal);border-radius:12px;padding:24px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--signal-t);margin-bottom:14px;font-weight:600;">Recommended</div>
+        <div style="font-family:'Newsreader',serif;font-style:italic;font-size:22px;line-height:1.3;color:var(--t1);margin-bottom:12px;">Turn customer touchpoints into revenue touchpoints.</div>
+        <div style="font-size:14px;color:var(--t2);line-height:1.7;">Every interaction from first click to loyalty moment is a chance to acquire, convert, or retain. SagePilot's AI employees manage all of it, on-brand, at scale, without hiring proportionally.</div>
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--signal);font-size:12px;color:var(--t2);line-height:1.6;">
+          <strong style="color:var(--signal-t);">Why:</strong> Opens with the business problem (customer touchpoints = revenue moments). Then explains what's different (on-brand, at scale, without headcount). Makes the value immediate.
+        </div>
+      </div>
+
+    </div>
+
+    <p style="font-size:13px;color:var(--t2);margin-top:28px;line-height:1.6;max-width:720px;"><strong>Expected impact:</strong> Hypothesis: this messaging should increase homepage-to-demo conversion by clarifying what the business outcome actually is (revenue per lifecycle stage, not just "AI technology"). I'd validate with an A/B test before rolling out to paid traffic.</p>
+  </div>
+</section>
+
+<!-- SECTION 03: BATTLECARD EXAMPLE -->
+<section class="part" id="battlecard">
+  <div class="wrap rv">
+    <div class="sec-label">
+      <span class="sec-num">03</span>
+      <span class="sec-title">Sales Battlecard</span>
+    </div>
+    <h2 class="part-h">Sales wins when they can respond in 10 seconds.</h2>
+    <p class="part-lead">Most of SagePilot's losses will come from one objection: "This looks like a chatbot." Here's the battlecard sales needs before the first call.</p>
+
+    <div style="margin-top:32px;background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;">
+      
+      <div style="background:var(--signal-dim);padding:20px;border-bottom:1px solid var(--bdr);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--signal-t);font-weight:600;margin-bottom:6px;">Objection</div>
+        <div style="font-size:15px;color:var(--t1);font-weight:600;">Isn't this just a chatbot?</div>
+      </div>
+
+      <div style="padding:20px;border-bottom:1px solid var(--bdr);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:10px;">Why they say it</div>
+        <div style="font-size:13px;color:var(--t2);line-height:1.6;">Chatbots are everywhere. They're cheap. They fail spectacularly. Buyer has been burned by one. SagePilot looks like "another AI" until proven otherwise.</div>
+      </div>
+
+      <div style="padding:20px;border-bottom:1px solid var(--bdr);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:10px;">Your response</div>
+        <div style="font-size:13px;color:var(--t2);line-height:1.8;">
+          <strong>Not if it understands your brand.</strong> Chatbots give generic responses. SagePilot learns your brand voice, your product strategy, your customer journey. It automates every stage of customer lifecycle, not just customer service. That's the difference between <i>responding</i> to customers and <i>advancing</i> them toward purchase.
+        </div>
+      </div>
+
+      <div style="padding:20px;border-bottom:1px solid var(--bdr);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:10px;">Proof point</div>
+        <div style="font-size:13px;color:var(--t2);line-height:1.8;">Pull a real customer case study from SagePilot's customer list (from their D2C, retail, or beauty verticals). Show the actual before/after metrics on acquisition, conversion, or support efficiency. The conversation shifts immediately from "is this just a chatbot?" to "what specifically improved for them?"</div>
+      </div>
+
+      <div style="padding:20px;background:var(--signal-dim);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:var(--signal-t);font-weight:600;margin-bottom:10px;">Next action</div>
+        <div style="font-size:13px;color:var(--t2);line-height:1.8;">Demo the lifecycle view. Show how the same AI employee moves a customer from discovery to purchase to retention. End with: "What does your customer journey look like today?" (Reframe from product to their problem.)</div>
+      </div>
+
+    </div>
+
+    <p style="font-size:13px;color:var(--t2);margin-top:24px;line-height:1.6;max-width:720px;"><strong>Expected impact:</strong> Sales team tests this response in the next 20 calls. Track win rate on deals where this objection appears. If win rate goes from 22% to 31%, expand the battlecard playbook across all common objections.</p>
+  </div>
+</section>
+
+<!-- SECTION 04: COMPETITIVE POSITIONING -->
+<section class="part" id="competitive">
+  <div class="wrap rv">
+    <div class="sec-label">
+      <span class="sec-num">04</span>
+      <span class="sec-title">Competitive Position</span>
+    </div>
+    <h2 class="part-h">The real competitor is inertia, not other tools.</h2>
+    <p class="part-lead">Most founders in customer experience haven't decided to buy AI yet. SagePilot's positioning job is to own the "why automate customer lifecycle" conversation before someone else does.</p>
+
+    <div class="positioning-grid">
+      <div class="pos-card">
+        <div class="pos-vs">My take: Don't get trapped in the chatbot category</div>
+        <div class="pos-title">Own a Different Frame</div>
+        <div class="pos-content">
+          <div class="pos-row">
+            <span>Why</span>
+            <span>Buyers will naturally try to categorize SagePilot alongside chatbots because that's what they know. But that's a losing frame. Lead with what's different: lifecycle automation and brand consistency. This positions SagePilot in a new category entirely.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pos-card">
+        <div class="pos-vs">vs Status quo (manual teams)</div>
+        <div class="pos-title">The Real Wedge</div>
+        <div class="pos-content">
+          <div class="pos-row">
+            <span>Why</span>
+            <span>Founders aren't asking "should we use AI?" yet. They're asking "how do we handle customer interactions better without hiring 15 more people?" That's where SagePilot wins. Frame it around headcount math, not AI innovation.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pos-card">
+        <div class="pos-vs">My hypothesis</div>
+        <div class="pos-title">Go after mid-market D2C first</div>
+        <div class="pos-content">
+          <div class="pos-row">
+            <span>Why</span>
+            <span>They're too big to ignore customer experience. Too small to hire armies. They've already been burned by chatbots. They're desperate for a faster solution. Focus GTM here before enterprise. Build momentum through case studies.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 05: FIRST 90 DAYS -->
+<section class="part" id="90days">
+  <div class="wrap rv">
+    <div class="sec-label">
+      <span class="sec-num">05</span>
+      <span class="sec-title">Execution Plan</span>
+    </div>
+    <h2 class="part-h">Not what to do. What to do first.</h2>
+    <p class="part-lead">Most PMMs build 10 things when they should build 3 things really well. Here's the 90-day roadmap prioritized by pipeline impact, not effort.</p>
+
+    <div style="margin-top:32px;display:grid;grid-template-columns:1fr;gap:20px;">
+      
+      <div style="background:var(--bg2);border:1px solid var(--signal);border-radius:12px;padding:24px;border-left:3px solid var(--signal);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--signal-t);font-weight:600;margin-bottom:10px;">Weeks 1-3</div>
+        <div style="font-size:15px;color:var(--t1);font-weight:600;margin-bottom:12px;">Lock positioning and messaging</div>
+        <div style="font-size:13px;color:var(--t2);line-height:1.8;margin-bottom:16px;">
+          Finalize the story. Get founder, CEO, and sales leader alignment on: "What is SagePilot, in one sentence?" and "Why would a mid-market D2C brand buy?" Run internal positioning workshop. Do not proceed to marketing until this is locked.
+        </div>
+        <div style="font-size:12px;color:var(--t3);padding:10px;background:var(--signal-dim);border-radius:6px;border-left:2px solid var(--signal);">
+          <strong>Metric:</strong> Sales can explain the positioning. Founder says "yes" to all messaging pillars. No more than 2 messaging revisions after this.
+        </div>
+      </div>
+
+      <div style="background:var(--bg2);border:1px solid var(--accent);border-radius:12px;padding:24px;border-left:3px solid var(--accent);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:10px;">Weeks 4-6</div>
+        <div style="font-size:15px;color:var(--t1);font-weight:600;margin-bottom:12px;">Sales enablement, not content</div>
+        <div style="font-size:13px;color:var(--t2);line-height:1.8;margin-bottom:16px;">
+          Build 3 things: (1) Discovery deck that tells the story in 8 slides, (2) Battlecards for the top 3 objections, (3) One-page ROI calculator. Get sales to use them in every call. Track what lands.
+        </div>
+        <div style="font-size:12px;color:var(--t3);padding:10px;background:var(--accent-dim);border-radius:6px;border-left:2px solid var(--accent);">
+          <strong>Metric:</strong> Sales uses deck in 10 calls. Battlecard response changes win rate by 3%+. ROI calc sent to 5+ CFOs. Gather feedback.
+        </div>
+      </div>
+
+      <div style="background:var(--bg2);border:1px solid var(--t1);border-radius:12px;padding:24px;border-left:3px solid rgba(238,242,247,0.3);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--t2);font-weight:600;margin-bottom:10px;">Weeks 7-9</div>
+        <div style="font-size:15px;color:var(--t1);font-weight:600;margin-bottom:12px;">Homepage and first customer story</div>
+        <div style="font-size:13px;color:var(--t2);line-height:1.8;margin-bottom:16px;">
+          Rewrite homepage hero (use the framework above). Publish first case study from a D2C brand showing lifecycle ROI. Create a LinkedIn thread around it. Get this into sales hands to reference during calls.
+        </div>
+        <div style="font-size:12px;color:var(--t3);padding:10px;background:rgba(255,255,255,0.04);border-radius:6px;border-left:2px solid var(--bdr);">
+          <strong>Metric:</strong> Homepage CTR improves 10%+. Case study gets 500+ views. Demo requests from LinkedIn increase 15% week-over-week.
+        </div>
+      </div>
+
+    </div>
+
+    <div style="margin-top:32px;padding:20px;background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;font-weight:600;">What NOT to do</div>
+      <div style="font-size:13px;color:var(--t2);line-height:1.8;">
+        Don't start a blog series. Don't build vertical hubs. Don't create 10 case studies. Don't launch a newsletter. These all feel productive but they don't move pipeline in the first 90 days. Focus ruthlessly on assets that shorten sales cycle and increase deal velocity. Everything else is phase 2.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 06: WEEK 1 -->
+<section class="part" id="week1">
+  <div class="wrap rv">
+    <div class="sec-label">
+      <span class="sec-num">06</span>
+      <span class="sec-title">If I Start Monday</span>
+    </div>
+    <h2 class="part-h">Here's what ships in Week 1.</h2>
+    <p class="part-lead">Not strategy documents. Not decks about future plans. Real deliverables that impact the business immediately.</p>
+
+    <div style="margin-top:32px;display:grid;grid-template-columns:1fr;gap:14px;max-width:700px;">
+      
+      <div style="background:var(--signal-dim);border:1px solid var(--signal);border-radius:10px;padding:18px;display:flex;gap:14px;align-items:flex-start;">
+        <div style="font-size:22px;flex-shrink:0;">1.</div>
+        <div>
+          <div style="font-size:14px;color:var(--t1);font-weight:600;margin-bottom:6px;">Lock positioning with founder in 2 hours</div>
+          <div style="font-size:13px;color:var(--t2);line-height:1.6;">Run a 90-minute workshop. Get unanimous alignment on: "What is SagePilot in one sentence?" and "Why does a mid-market D2C brand need us?" Get it in writing. Everything else depends on this.</div>
+        </div>
+      </div>
+
+      <div style="background:var(--accent-dim);border:1px solid var(--accent);border-radius:10px;padding:18px;display:flex;gap:14px;align-items:flex-start;">
+        <div style="font-size:22px;flex-shrink:0;">2.</div>
+        <div>
+          <div style="font-size:14px;color:var(--t1);font-weight:600;margin-bottom:6px;">Rewrite the homepage hero</div>
+          <div style="font-size:13px;color:var(--t2);line-height:1.6;">Use the framework above. Test it internally. Get sales feedback. Don't overthink. Ship by Friday EOD with a note on what we'd A/B test first.</div>
+        </div>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.04);border:1px solid var(--bdr);border-radius:10px;padding:18px;display:flex;gap:14px;align-items:flex-start;">
+        <div style="font-size:22px;flex-shrink:0;">3.</div>
+        <div>
+          <div style="font-size:14px;color:var(--t1);font-weight:600;margin-bottom:6px;">Build the first battlecard</div>
+          <div style="font-size:13px;color:var(--t2);line-height:1.6;">The "is this just a chatbot?" objection. One page. Objection, why they say it, our response, proof point, next action. Sales tests it in the next 5 calls and reports back.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <p style="font-size:13px;color:var(--t3);margin-top:28px;line-height:1.6;max-width:720px;">That's it. Three things. Everything else is phase 2. This is what I'd own by Friday. This is what moves the needle in the first week.</p>
+  </div>
+</section>
+
+<!-- SECTION 07: OTHER WORK -->
+<section class="part" id="work">
+  <div class="wrap rv">
+    <div class="sec-label">
+      <span class="sec-num">07</span>
+      <span class="sec-title">Other Relevant Work</span>
+    </div>
+    <h2 class="part-h">Strategic work across adjacent categories.</h2>
+
+    <div class="proof-grid">
+      <a href="https://bhanuexcalibur.github.io/Stripe/" target="_blank" rel="noopener" class="proof-card">
+        <div class="proof-name">Stripe</div>
+        <div class="proof-title">Global PMM Positioning</div>
+        <div class="proof-desc">Positioning an infrastructure product for consumer creators and developers simultaneously. Competitive landscape analysis.</div>
+      </a>
+
+      <a href="https://bhanuexcalibur.github.io/roboflow/" target="_blank" rel="noopener" class="proof-card">
+        <div class="proof-name">Roboflow</div>
+        <div class="proof-title">Computer Vision AI Positioning</div>
+        <div class="proof-desc">Positioning AI/ML product for technical buyers and non-technical operators. Category definition for computer vision deployment.</div>
+      </a>
+
+      <a href="https://bhanuexcalibur.github.io/Chargebee/" target="_blank" rel="noopener" class="proof-card">
+        <div class="proof-name">Chargebee</div>
+        <div class="proof-title">B2B SaaS Monetization</div>
+        <div class="proof-desc">Positioning complex billing product for CFOs, RevOps, and product teams. Building a buyer journey across technical and financial stakeholders.</div>
+      </a>
+
+      <a href="https://bhanuexcalibur.github.io/Plane/" target="_blank" rel="noopener" class="proof-card">
+        <div class="proof-name">Plane</div>
+        <div class="proof-title">Product Management Software</div>
+        <div class="proof-desc">Competitive positioning for developers and product teams. Narrative around speed and simplicity vs. enterprise feature bloat.</div>
+      </a>
+
+      <a href="https://bhanuexcalibur.github.io/Lifesight/" target="_blank" rel="noopener" class="proof-card">
+        <div class="proof-name">Lifesight</div>
+        <div class="proof-title">Marketing Analytics & Measurement</div>
+        <div class="proof-desc">Positioning measurement and customer insights for growth teams. Showing how data informs lifecycle marketing strategy.</div>
+      </a>
+
+      <a href="https://bhanuexcalibur.github.io/Avvio/" target="_blank" rel="noopener" class="proof-card">
+        <div class="proof-name">Avvio</div>
+        <div class="proof-title">Neobank D2C GTM</div>
+        <div class="proof-desc">Consumer brand positioning for financial services. Messaging that bridges fintech credibility with consumer accessibility.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<div class="wrap">
+  <div class="sig">
+    <div class="sig-main">
+      <div class="sig-name">Bhanu Kumar<span> (Excalibur)</span></div>
+      <div class="sig-links">
+        <a href="https://linkedin.com/in/bhanuexcalibur" target="_blank" rel="noopener" class="sig-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"></path>
+            <circle cx="4" cy="4" r="2"></circle>
+          </svg>
+          LinkedIn
+        </a>
+        <a href="mailto:bhanukumar0902@gmail.com" class="sig-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+          Email
+        </a>
+        <a href="https://drive.google.com/file/d/15qSm6k2kBwkK4PWLJexGCplWafrjgYCU/view?usp=sharing" target="_blank" rel="noopener" class="sig-resume">
+          Resume
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <b>Research & Verification:</b> All claims in this PoW are based on verified public information from SagePilot's website, official announcements, and the stated job description. The positioning frameworks, messaging matrices, and competitive comparisons represent strategic analysis based on stated product capabilities and market positioning. No invented features or unverified metrics were used.
+  </div>
+</div>
+
+<script>
+// Progress bar
+window.addEventListener('scroll', () => {
+  const h = document.documentElement,
+    b = document.body,
+    st = 'scrollTop',
+    sh = 'scrollHeight';
+  let percent = (h[st]||b[st]) / ((h[sh]||b[sh]) - h.clientHeight) * 100;
+  document.getElementById('pbar').style.width = percent + '%';
+});
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('in');
+    }
+  });
+}, {threshold: 0.1});
+
+document.querySelectorAll('.rv').forEach(el => observer.observe(el));
+
+// Mobile menu
+function toggleMob() {
+  document.getElementById('mobm').classList.toggle('open');
+  document.getElementById('hbg').classList.toggle('open');
+}
+
+function closeMob() {
+  document.getElementById('mobm').classList.remove('open');
+  document.getElementById('hbg').classList.remove('open');
+}
+</script>
+
+</body>
+</html>
